@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:interndemo/components/fixedvalues.dart';
 import 'package:interndemo/model/course_details.dart';
 import 'package:interndemo/model/network_utils.dart';
-import 'package:video_player/video_player.dart';
 import 'package:get/get.dart';
+import 'package:video_player/video_player.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({super.key});
@@ -17,26 +17,55 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
-  late VideoPlayerController controller;
   CourseDetails courseDetails = CourseDetails();
+
+  late VideoPlayerController videoPlayerController;
+   late Future<void> future;
+ 
+  // final String videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+  // final String thumbnail = "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getAll();
+    playVideo(
+        // "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        // "C://Users//saons//Desktop//BigBuckBunny.mp4",
+      "https://www.youtube.com/watch?v=j9FmFX4ZNvQ",
+        "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png");
+    future = videoPlayerController.initialize();
+  }
+
+  void playVideo(String videoUrl, String thumbnail) {
+    videoPlayerController =
+        VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+          // ..initialize().then((_) {
+          //   setState(() {});
+          // });
+
+    // videoPlayerController.play();
+    // videoPlayerController.addListener(() {
+    //   setState(() {});
+    // });
   }
 
   Future<void> getAll() async {
     final response = await NetworkUtils.getMethod(apiUrl);
     if (response != null) {
       courseDetails = CourseDetails.fromJson(response);
-      print(courseDetails.data?.requirements?.length);
     } else {
       // SnackBar(context, 'Unable to fetch data', true);
       Get.snackbar("FAILED", "Unable to fetch data",
           backgroundColor: Colors.red);
     }
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    super.dispose();
   }
 
   @override
@@ -80,10 +109,10 @@ class _CourseScreenState extends State<CourseScreen> {
       // body
       body: SingleChildScrollView(
         child: Container(
-          decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(25), topRight: Radius.circular(25)),
-              color: white),
+              color: Color(0xfff7f8fa)),
           width: MediaQuery.of(context).size.width,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -94,6 +123,35 @@ class _CourseScreenState extends State<CourseScreen> {
                 SizedBox(
                   height: 10,
                 ),
+
+                // video place
+                
+                FutureBuilder(future: future, builder: (context, snapshot){
+                  if(snapshot.connectionState == ConnectionState.done){
+                        return AspectRatio(aspectRatio: videoPlayerController.value.aspectRatio,
+                          child: VideoPlayer(videoPlayerController),
+
+
+                          // child: Stack(
+                          //   alignment: Alignment.bottomCenter,
+                          //   children: [
+                          //     VideoPlayer(videoPlayerController),
+                          //     VideoProgressIndicator(videoPlayerController, allowScrubbing: true),
+                          //
+                          //   ],
+                          // ),
+
+                        );
+                  }
+                  else{
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+
+                // CustomVideoPlayer(
+                //     customVideoPlayerController: _customVideoPlayerController),
 
                 // title text
                 Text(
@@ -253,6 +311,9 @@ class _CourseScreenState extends State<CourseScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.grey),
                 ),
+                const SizedBox(
+                  height: 15,
+                ),
 
                 // buy now button
                 SizedBox(
@@ -338,6 +399,16 @@ class _CourseScreenState extends State<CourseScreen> {
                           courseDetails.data?.learningTopic?.length ?? 0),
                 ),
 
+                const SizedBox(
+                  height: 15,
+                ),
+
+                // course curriculum
+                Text(
+                  "Course Curriculum",
+                  style: popinsTitle.copyWith(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(
                   height: 15,
                 ),
