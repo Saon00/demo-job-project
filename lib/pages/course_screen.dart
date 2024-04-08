@@ -1,8 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+// import 'package:interndemo/components/course_curriculum.dart';
 import 'package:interndemo/components/fixedvalues.dart';
 import 'package:interndemo/model/course_details.dart';
 import 'package:interndemo/model/network_utils.dart';
@@ -11,6 +11,7 @@ import 'package:video_player/video_player.dart';
 
 import '../components/overlaycontrol.dart';
 
+CourseDetails courseDetails = CourseDetails();
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({super.key});
@@ -20,31 +21,24 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
-  CourseDetails courseDetails = CourseDetails();
-
   late VideoPlayerController videoPlayerController;
   late Future<void> future;
 
-  // final String videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-  // final String thumbnail = "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png";
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getAll();
     playVideo(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png");
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
     future = videoPlayerController.initialize();
   }
 
-  void playVideo(String videoUrl, String thumbnail) {
+  void playVideo(String videoUrl) {
     videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
         videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
 
-    videoPlayerController.play();
+    // videoPlayerController.play();
     videoPlayerController.addListener(() {
       setState(() {});
     });
@@ -125,33 +119,43 @@ class _CourseScreenState extends State<CourseScreen> {
                 ),
 
                 // video place
-
                 FutureBuilder(
                     future: future,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return AspectRatio(
                           aspectRatio: videoPlayerController.value.aspectRatio,
+                          //     child: videoPlayerController.value.isInitialized ?
+                          //     GestureDetector(
+                          //       onTap: (){
+                          //         setState(() {
+                          //           videoPlayerController.play();
+                          //         });
+                          //       },
+                          //       child: Image.network(
+                          //         "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png",
+                          //         fit: BoxFit.cover,),
+                          //     )
+                          // :
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: [
                               VideoPlayer(videoPlayerController),
+                              ControlsOverlay(
+                                  controller: videoPlayerController),
                               VideoProgressIndicator(videoPlayerController,
                                   allowScrubbing: true),
-                              ControlsOverlay(
-                                  controller: videoPlayerController)
                             ],
                           ),
                         );
                       } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return Center(child: CircularProgressIndicator());
                       }
                     }),
 
-                // CustomVideoPlayer(
-                //     customVideoPlayerController: _customVideoPlayerController),
+                SizedBox(
+                  height: 30,
+                ),
 
                 // title text
                 Text(
@@ -413,6 +417,8 @@ class _CourseScreenState extends State<CourseScreen> {
                   height: 15,
                 ),
 
+                Steps(),
+
                 Text(
                   "This course includes",
                   style: popinsTitle.copyWith(
@@ -525,8 +531,6 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 }
 
-
-
 class CourseIncludedWidget extends StatelessWidget {
   final String text;
   final IconData icon;
@@ -563,4 +567,88 @@ class CourseIncludedWidget extends StatelessWidget {
   }
 }
 
+class Step {
+  Step(this.title, this.body, [this.isExpanded = false]);
 
+  String title;
+  String body;
+  bool isExpanded;
+}
+
+List<Step> getSteps() {
+  return [
+    Step(courseDetails.data?.sections?[0].topic.toString() ?? "awd",
+        'Install Flutter development tools according to the official documentation.'),
+    Step('Step 1: Create a project',
+        'Open your terminal, run `flutter create <project_name>` to create a new project.'),
+    // Step('Step 2: Run the app', 'Change your terminal directory to the project directory, enter `flutter run`.'),
+  ];
+}
+
+// ListView? getSteps(){
+//    ListView.builder(itemBuilder: (context, index){
+//     return Column(
+//       children: [],
+//     );
+//   });
+// }
+
+class Steps extends StatefulWidget {
+  const Steps({Key? key}) : super(key: key);
+
+  @override
+  State<Steps> createState() => _StepsState();
+}
+
+class _StepsState extends State<Steps> {
+  // final List<Step> _steps = getSteps();
+  final List<dynamic> _steps = getSteps();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      child: ListView.builder(
+        itemCount: courseDetails.data?.sections?.length,
+        itemBuilder: (context, index) {
+          return Container(
+            child: _renderSteps(index),
+          );
+        }
+      ),
+    );
+  }
+
+  Widget _renderSteps(int i) {
+    return ExpansionPanelList.radio(
+        children: [
+      ExpansionPanelRadio(
+        value: courseDetails.data?.sections![i].description.toString() ?? "Null",
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text(
+                  courseDetails.data?.sections![i].topic.toString() ?? "Null Title"),
+            );
+          },
+          body: ListTile(
+            title: Text(
+                courseDetails.data?.sections![i].description.toString() ?? "Null Description"),
+          ))
+    ]
+
+        // children: _steps.map<ExpansionPanelRadio>((Step step) {
+        //   return ExpansionPanelRadio(
+        //       headerBuilder: (BuildContext context, bool isExpanded) {
+        //         return ListTile(
+        //           title: Text(step.title),
+        //         );
+        //       },
+        //       body: ListTile(
+        //         title: Text(step.body),
+        //       ),
+        //       value: step.title
+        //   );
+        // }).toList(),
+        );
+  }
+}
