@@ -9,6 +9,9 @@ import 'package:interndemo/model/network_utils.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../components/overlaycontrol.dart';
+
+
 class CourseScreen extends StatefulWidget {
   const CourseScreen({super.key});
 
@@ -20,8 +23,8 @@ class _CourseScreenState extends State<CourseScreen> {
   CourseDetails courseDetails = CourseDetails();
 
   late VideoPlayerController videoPlayerController;
-   late Future<void> future;
- 
+  late Future<void> future;
+
   // final String videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
   // final String thumbnail = "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png";
 
@@ -31,28 +34,25 @@ class _CourseScreenState extends State<CourseScreen> {
     super.initState();
     getAll();
     playVideo(
-        // "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        // "C://Users//saons//Desktop//BigBuckBunny.mp4",
-      "https://www.youtube.com/watch?v=j9FmFX4ZNvQ",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         "https://getlearn-admin.getbuildfirst.com/storage/app/public/course/17114492716602a4b794245.png");
     future = videoPlayerController.initialize();
   }
 
   void playVideo(String videoUrl, String thumbnail) {
-    videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(videoUrl));
-          // ..initialize().then((_) {
-          //   setState(() {});
-          // });
+    videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(videoUrl),
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
 
-    // videoPlayerController.play();
-    // videoPlayerController.addListener(() {
-    //   setState(() {});
-    // });
+    videoPlayerController.play();
+    videoPlayerController.addListener(() {
+      setState(() {});
+    });
   }
 
   Future<void> getAll() async {
     final response = await NetworkUtils.getMethod(apiUrl);
+    setState(() {});
     if (response != null) {
       courseDetails = CourseDetails.fromJson(response);
     } else {
@@ -125,30 +125,30 @@ class _CourseScreenState extends State<CourseScreen> {
                 ),
 
                 // video place
-                
-                FutureBuilder(future: future, builder: (context, snapshot){
-                  if(snapshot.connectionState == ConnectionState.done){
-                        return AspectRatio(aspectRatio: videoPlayerController.value.aspectRatio,
-                          child: VideoPlayer(videoPlayerController),
 
-
-                          // child: Stack(
-                          //   alignment: Alignment.bottomCenter,
-                          //   children: [
-                          //     VideoPlayer(videoPlayerController),
-                          //     VideoProgressIndicator(videoPlayerController, allowScrubbing: true),
-                          //
-                          //   ],
-                          // ),
-
+                FutureBuilder(
+                    future: future,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return AspectRatio(
+                          aspectRatio: videoPlayerController.value.aspectRatio,
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              VideoPlayer(videoPlayerController),
+                              VideoProgressIndicator(videoPlayerController,
+                                  allowScrubbing: true),
+                              ControlsOverlay(
+                                  controller: videoPlayerController)
+                            ],
+                          ),
                         );
-                  }
-                  else{
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
 
                 // CustomVideoPlayer(
                 //     customVideoPlayerController: _customVideoPlayerController),
@@ -525,6 +525,8 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 }
 
+
+
 class CourseIncludedWidget extends StatelessWidget {
   final String text;
   final IconData icon;
@@ -560,3 +562,5 @@ class CourseIncludedWidget extends StatelessWidget {
     );
   }
 }
+
+
