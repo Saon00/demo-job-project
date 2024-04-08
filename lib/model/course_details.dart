@@ -46,28 +46,28 @@ class Data {
 
   Data(
       {this.id,
-        this.title,
-        this.subTitle,
-        this.categoryId,
-        this.subCategoryId,
-        this.instructorId,
-        this.learningTopic,
-        this.requirements,
-        this.description,
-        this.price,
-        this.status,
-        this.isFeatured,
-        this.greetings,
-        this.congratulationMessage,
-        this.thumb,
-        this.createdAt,
-        this.updatedAt,
-        this.sections,
-        this.moreCourse,
-        this.courseIntroVideo,
-        this.videoSourceType,
-        this.videoLinkPath,
-        this.intro});
+      this.title,
+      this.subTitle,
+      this.categoryId,
+      this.subCategoryId,
+      this.instructorId,
+      this.learningTopic,
+      this.requirements,
+      this.description,
+      this.price,
+      this.status,
+      this.isFeatured,
+      this.greetings,
+      this.congratulationMessage,
+      this.thumb,
+      this.createdAt,
+      this.updatedAt,
+      this.sections,
+      this.moreCourse,
+      this.courseIntroVideo,
+      this.videoSourceType,
+      this.videoLinkPath,
+      this.intro});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -151,12 +151,12 @@ class Sections {
 
   Sections(
       {this.id,
-        this.topic,
-        this.description,
-        this.courseId,
-        this.createdAt,
-        this.updatedAt,
-        this.lessons});
+      this.topic,
+      this.description,
+      this.courseId,
+      this.createdAt,
+      this.updatedAt,
+      this.lessons});
 
   Sections.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -199,12 +199,12 @@ class Lessons {
 
   Lessons(
       {this.id,
-        this.courseId,
-        this.sectionId,
-        this.lectureTitle,
-        this.videoResource,
-        this.videoLinkPath,
-        this.videoSourceType});
+      this.courseId,
+      this.sectionId,
+      this.lectureTitle,
+      this.videoResource,
+      this.videoLinkPath,
+      this.videoSourceType});
 
   Lessons.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -248,20 +248,20 @@ class MoreCourse {
 
   MoreCourse(
       {this.id,
-        this.thumb,
-        this.title,
-        this.subTitle,
-        this.learningTopic,
-        this.requirements,
-        this.description,
-        this.completedLessons,
-        this.completedPercentage,
-        this.isFree,
-        this.totalRating,
-        this.price,
-        this.isDiscounted,
-        this.discountType,
-        this.discountedPrice});
+      this.thumb,
+      this.title,
+      this.subTitle,
+      this.learningTopic,
+      this.requirements,
+      this.description,
+      this.completedLessons,
+      this.completedPercentage,
+      this.isFree,
+      this.totalRating,
+      this.price,
+      this.isDiscounted,
+      this.discountType,
+      this.discountedPrice});
 
   MoreCourse.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -320,19 +320,19 @@ class Intro {
 
   Intro(
       {this.id,
-        this.courseId,
-        this.assignmentId,
-        this.lessonId,
-        this.quizId,
-        this.fileName,
-        this.resourseType,
-        this.videoSourceType,
-        this.path,
-        this.videoLinkPath,
-        this.mimeType,
-        this.createdAt,
-        this.updatedAt,
-        this.isVideo});
+      this.courseId,
+      this.assignmentId,
+      this.lessonId,
+      this.quizId,
+      this.fileName,
+      this.resourseType,
+      this.videoSourceType,
+      this.path,
+      this.videoLinkPath,
+      this.mimeType,
+      this.createdAt,
+      this.updatedAt,
+      this.isVideo});
 
   Intro.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -652,8 +652,8 @@ class _StepsState extends State<Steps> {
                           onTap: () {
                             setState(() {
                               videoUrl = courseDetails.data?.sections![i]
-                                  .lessons![index].videoLinkPath
-                                  .toString() ??
+                                      .lessons![index].videoLinkPath
+                                      .toString() ??
                                   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
                             });
                           },

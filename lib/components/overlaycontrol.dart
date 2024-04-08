@@ -39,16 +39,16 @@ class ControlsOverlay extends StatelessWidget {
           child: controller.value.isPlaying
               ? const SizedBox.shrink()
               : const ColoredBox(
-            color: Colors.black26,
-            child: Center(
-              child: Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-                size: 100.0,
-                semanticLabel: 'Play',
-              ),
-            ),
-          ),
+                  color: Colors.black26,
+                  child: Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 100.0,
+                      semanticLabel: 'Play',
+                    ),
+                  ),
+                ),
         ),
         GestureDetector(
           onTap: () {
@@ -97,7 +97,10 @@ class ControlsOverlay extends StatelessWidget {
                 for (final double speed in _examplePlaybackRates)
                   PopupMenuItem<double>(
                     value: speed,
-                    child: Text('${speed}x', style: popinsTitle.copyWith(color: purple),),
+                    child: Text(
+                      '${speed}x',
+                      style: popinsTitle.copyWith(color: purple),
+                    ),
                   )
               ];
             },
@@ -109,7 +112,8 @@ class ControlsOverlay extends StatelessWidget {
                 vertical: 12,
                 horizontal: 16,
               ),
-              child: Text('${controller.value.playbackSpeed}x', style: popinsTitle.copyWith(color: purple)),
+              child: Text('${controller.value.playbackSpeed}x',
+                  style: popinsTitle.copyWith(color: purple)),
             ),
           ),
         ),
