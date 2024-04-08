@@ -12,6 +12,8 @@ import 'package:video_player/video_player.dart';
 import '../components/overlaycontrol.dart';
 
 CourseDetails courseDetails = CourseDetails();
+String videoUrl =
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({super.key});
@@ -28,8 +30,7 @@ class _CourseScreenState extends State<CourseScreen> {
   void initState() {
     super.initState();
     getAll();
-    playVideo(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+    playVideo(videoUrl);
     future = videoPlayerController.initialize();
   }
 
@@ -567,23 +568,23 @@ class CourseIncludedWidget extends StatelessWidget {
   }
 }
 
-class Step {
-  Step(this.title, this.body, [this.isExpanded = false]);
+// class Step {
+//   Step(this.title, this.body, [this.isExpanded = false]);
+//
+//   String title;
+//   String body;
+//   bool isExpanded;
+// }
 
-  String title;
-  String body;
-  bool isExpanded;
-}
-
-List<Step> getSteps() {
-  return [
-    Step(courseDetails.data?.sections?[0].topic.toString() ?? "awd",
-        'Install Flutter development tools according to the official documentation.'),
-    Step('Step 1: Create a project',
-        'Open your terminal, run `flutter create <project_name>` to create a new project.'),
-    // Step('Step 2: Run the app', 'Change your terminal directory to the project directory, enter `flutter run`.'),
-  ];
-}
+// List<Step> getSteps() {
+//   return [
+//     Step(courseDetails.data?.sections?[0].topic.toString() ?? "awd",
+//         'Install Flutter development tools according to the official documentation.'),
+//     Step('Step 1: Create a project',
+//         'Open your terminal, run `flutter create <project_name>` to create a new project.'),
+//     // Step('Step 2: Run the app', 'Change your terminal directory to the project directory, enter `flutter run`.'),
+//   ];
+// }
 
 // ListView? getSteps(){
 //    ListView.builder(itemBuilder: (context, index){
@@ -602,38 +603,91 @@ class Steps extends StatefulWidget {
 
 class _StepsState extends State<Steps> {
   // final List<Step> _steps = getSteps();
-  final List<dynamic> _steps = getSteps();
+  // final List<dynamic> _steps = getSteps();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 300,
       child: ListView.builder(
-        itemCount: courseDetails.data?.sections?.length,
-        itemBuilder: (context, index) {
-          return Container(
-            child: _renderSteps(index),
-          );
-        }
-      ),
+          itemCount: courseDetails.data?.sections?.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Container(
+                child: _renderSteps(index),
+              ),
+            );
+          }),
     );
   }
 
   Widget _renderSteps(int i) {
-    return ExpansionPanelList.radio(
-        children: [
+    return ExpansionPanelList.radio(children: [
       ExpansionPanelRadio(
-        value: courseDetails.data?.sections![i].description.toString() ?? "Null",
+          value:
+              courseDetails.data?.sections![i].description.toString() ?? "Null",
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
               title: Text(
-                  courseDetails.data?.sections![i].topic.toString() ?? "Null Title"),
+                  courseDetails.data?.sections![i].topic.toString() ??
+                      "Null Title",
+                  style: popinsTitle.copyWith(
+                      color: purple,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold)),
             );
           },
-          body: ListTile(
-            title: Text(
-                courseDetails.data?.sections![i].description.toString() ?? "Null Description"),
-          ))
+          body: SizedBox(
+            height: 200,
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: courseDetails.data?.sections?[i].lessons?.length,
+                itemBuilder: (contex, index) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              videoUrl = courseDetails.data?.sections![i]
+                                  .lessons![index].videoLinkPath
+                                  .toString() ??
+                                  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.play_circle_outline,
+                                color: Colors.purple[200],
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                courseDetails.data?.sections![i].lessons?[index]
+                                        .lectureTitle
+                                        .toString() ??
+                                    "Null Title",
+                                style: popinsTitle.copyWith(
+                                    fontSize: 20, color: Colors.grey),
+                              ),
+                              // SizedBox(height: 50,),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }),
+          )
+          // body: ListTile(
+          //
+          //   title: Text(
+          //       courseDetails.data?.sections![i].description.toString() ??
+          //           "Null Description"),
+          // ),
+          )
     ]
 
         // children: _steps.map<ExpansionPanelRadio>((Step step) {
